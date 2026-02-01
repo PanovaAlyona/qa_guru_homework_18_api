@@ -1,19 +1,33 @@
-import time
-
-from selene import have, be
-
-from pages.home_page import HomePage
+import allure
 
 
+@allure.epic("Добавление товаров в корзину")
+@allure.title("Добавить один товар")
+def test_check_book_in_cart(cookies, managment_cart, api_login):
+    products = {"name": "Health Book", "price": "10.00", "count": "1"}
 
-def test_check_books_in_cart(cookies, setup_browser):
-    homepage = HomePage()
-    homepage.open_cart()
-    browser = setup_browser
-    browser.driver.add_cookie({"name": "NOPCOMMERCE.AUTH", "value": cookies})
-    browser.driver.refresh()
+    get_cookies_after_add_product = api_login.add_book_in_cart(cookies)
+
+    managment_cart.set_cookies_and_refresh_browser(
+        cookies, get_cookies_after_add_product
+    )
+    managment_cart.check_product_in_cart(
+        0, products["name"], products["price"], products["count"]
+    )
 
 
+@allure.epic("Добавление товаров в корзину")
+@allure.title("Добавить добавить два товара")
+def test_check_electronik_in_cart(cookies, managment_cart, api_login):
+    products = [
+        {"name": "Smartphone", "price": "100.00", "count": "1"},
+        {"name": "Phone Cover", "price": "10.00", "count": "3"},
+    ]
 
-
-    time.sleep(20)
+    get_cookies_after_add_product = (
+        api_login.add_smartphone_and_detail_in_cart(cookies)
+    )
+    managment_cart.set_cookies_and_refresh_browser(
+        cookies, get_cookies_after_add_product
+    )
+    managment_cart.check_some_products_in_cart(products)
